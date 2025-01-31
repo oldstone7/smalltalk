@@ -1,0 +1,136 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="chat-user-info">
+            <h4>{{ other_user.username }}</h4>
+        </div>
+        <div class="chat-header-icons">
+            <span class="mdi mdi-magnify mdi-24px"></span>
+            <span class="mdi mdi-information-outline mdi-24px"></span>
+            <span class="mdi mdi-dots-vertical mdi-24px"></span>
+        </div>
+    </div>
+    <div id="chat-box" class="chat-box">
+        {% for message in messages %}
+        <div class="chat-message {% if message.sender == user %}sent{% else %}received{% endif %}">
+            <div class="message-content">{{ message.content }}
+                <span class="message-timestamp">{{ message.timestamp|date:"g:i A" }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="chat-input-container">
+        <form id="chat-form" class="chat-form">
+            <input type="text" id="chat-message-input" class="chat-input" autocomplete="off" placeholder="Type a message">
+            <button type="button" id="chat-message-submit" class="send-button">Send</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const chatBox = document.getElementById('chat-box');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    const userId = "{{ user.id }}";
+    const otherUserId = "{{ other_user.id }}";
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + otherUserId + '/'
+    );
+
+    chatSocket.onopen = function(e) {
+        console.log('WebSocket connection opened');
+    };
+
+    chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    const chatBox = document.getElementById('chat-box');
+    const message = document.createElement('div');
+
+    // Check if the message is sent by the logged-in user or the other user
+    if (data.sender_id == userId) {
+        message.className = 'chat-message sent';  // Apply styles for sent messages
+        message.innerHTML = `
+            <div class="message-content">
+                ${data.message}
+                <span class="message-timestamp">${data.timestamp}</span>       
+            </div>`;
+    } else {
+        message.className = 'chat-message received';  // Apply styles for received messages
+        message.innerHTML = `
+            <div class="message-content">
+                ${data.message}
+                <span class="message-timestamp">${data.timestamp}</span>                       
+            </div>`;
+    }
+
+    chatBox.appendChild(message);
+    chatBox.scrollTop = chatBox.scrollHeight;  // Scroll to the latest message
+
+    // Update the last message and timestamp in the contact list
+    const lastMessageElement = document.getElementById(`last-message-${otherUserId}`);
+    const contactElement = document.querySelector(`.contacts a[href$="${otherUserId}/"]`);
+    const lastSeenElement = contactElement.querySelector('.last-seen');
+
+    if (lastMessageElement) {
+        lastMessageElement.textContent = data.message;
+    }
+    if (lastSeenElement) {
+        lastSeenElement.textContent = data.timestamp;
+    }
+};
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    chatSocket.onerror = function(e) {
+        console.error('WebSocket error:', e);
+    };
+
+    document.getElementById('chat-message-submit').onclick = function(e) {
+        sendMessage();
+    };
+
+    document.getElementById('chat-message-input').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    function sendMessage() {
+        const input = document.getElementById('chat-message-input');
+        const message = input.value;
+        if (message.trim() === '') return;
+
+        if (chatSocket.readyState === WebSocket.OPEN) {
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            input.value = '';
+        } else {
+            console.error('WebSocket is not open: ', chatSocket.readyState);
+        }
+    }
+
+    function formatTimestamp(date) {
+        const now = new Date();
+        const timeDiff = Math.abs(now - date);
+        const oneDay = 24 * 60 * 60 * 1000;
+
+        if (timeDiff < oneDay) {
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+        } else {
+            return date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+        }
+    }
+</script>
+{% endblock %}
+
+{{ redirect_to_login_immediately }}
+
+

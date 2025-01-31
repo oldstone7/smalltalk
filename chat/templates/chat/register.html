@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmallTalk - Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+      #toggle-password1, #toggle-password2 {
+        cursor: pointer;
+        position: absolute;
+        right: 2%;
+        top: 20%;
+      }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen flex flex-col justify-between">
+    <header class="bg-white shadow-md p-4">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-blue-600">SmallTalk</a>
+            <div>
+                <a href="#" class="text-gray-600 hover:text-blue-600 mx-2">About</a>
+                <a href="#" class="text-gray-600 hover:text-blue-600 mx-2">Contact</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center px-4 py-12">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+            <h2 class="text-2xl font-semibold text-center text-gray-700 mb-6">Create an Account</h2>
+            <form id="register-form" action="{% url 'register' %}" method="POST" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <input type="text" id="username" name="username" placeholder="Username" required class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <p id="username-error" class="text-red-500 text-xs mt-1 hidden"></p>
+                </div>
+                <div>
+                    <input type="email" id="email" name="email" placeholder="Email" required class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <p id="email-error" class="text-red-500 text-xs mt-1 hidden"></p>
+                </div>
+                <div class="relative">
+                    <input type="password" id="password1" name="password1" placeholder="Password" required class="w-full px-3 py-2 pr-10 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <button type="button" id="toggle-password1">
+                        <i class="fas fa-eye text-gray-400 hover:text-blue-500"></i>
+                    </button>
+                </div>
+                    <p id="password-error" class="text-red-500 text-xs hidden"></p>
+                <div id="password-strength-container" class="space-y-2 hidden">
+                    <div class="h-2 bg-gray-200 rounded-full">
+                        <div id="password-strength" class="h-2 rounded-full transition-all duration-300"></div>
+                    </div>
+                    <p id="password-strength-text" class="text-xs text-gray-600"></p>
+                </div>
+                <div class="relative">
+                    <input type="password" id="password2" name="password2" placeholder="Repeat Password" required class="w-full px-3 py-2 pr-10 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <button type="button" id="toggle-password2">
+                        <i class="fas fa-eye text-gray-400 hover:text-blue-500"></i>
+                    </button>
+                </div>
+                <p id="repeat-password-error" class="text-red-500 text-xs mt-1 hidden"></p>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                    Register
+                </button>
+            </form>
+            <p class="mt-4 text-center text-sm text-gray-600">
+                Already have an account? 
+                <a href="{% url 'login' %}" class="font-medium text-blue-600 hover:text-blue-500">
+                    Sign in
+                </a>
+            </p>
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+                <div class="mt-6 grid grid-cols-3 gap-3">
+                    <button onclick="oauthLogin('google')" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition duration-150 ease-in-out">
+                        <i class="fab fa-google text-red-500 mr-2"></i> Google
+                    </button>
+                    <button onclick="oauthLogin('discord')" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition duration-150 ease-in-out">
+                        <i class="fab fa-discord text-indigo-500 mr-2"></i> Discord
+                    </button>
+                    <button onclick="oauthLogin('github')" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition duration-150 ease-in-out">
+                        <i class="fab fa-github text-gray-800 mr-2"></i> GitHub
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto flex justify-between items-center px-3">
+          <p>&copy; <script>document.write(new Date().getFullYear());</script> SmallTalk. All rights reserved.</p>
+          <div>
+            <a href="#" class="text-gray-300 hover:text-white mx-2">Privacy Policy</a>
+            <a href="#" class="text-gray-300 hover:text-white mx-2">Terms of Service</a>
+          </div>
+        </div>
+      </footer>
+
+    <script>
+        const form = document.getElementById('register-form');
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password1');
+        const repeatPasswordInput = document.getElementById('password2');
+        const passwordStrength = document.getElementById('password-strength');
+        const passwordStrengthText = document.getElementById('password-strength-text');
+        const passwordStrengthContainer = document.getElementById('password-strength-container');
+
+        function togglePassword(inputId, buttonId) {
+            const input = document.getElementById(inputId);
+            const button = document.getElementById(buttonId);
+            const icon = button.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        document.getElementById('toggle-password1').addEventListener('click', () => togglePassword('password1', 'toggle-password1'));
+        document.getElementById('toggle-password2').addEventListener('click', () => togglePassword('password2', 'toggle-password2'));
+
+        function showError(inputId, message) {
+            const errorElement = document.getElementById(`${inputId}-error`);
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+        }
+
+        function hideError(inputId) {
+            const errorElement = document.getElementById(`${inputId}-error`);
+            errorElement.classList.add('hidden');
+        }
+
+        function validateUsername() {
+            const username = usernameInput.value.trim();
+            if (username.length < 3) {
+                showError('username', 'Username must be at least 3 characters long');
+                return false;
+            }
+            hideError('username');
+            return true;
+        }
+
+        function validateEmail() {
+            const email = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('email', 'Please enter a valid email address');
+                return false;
+            }
+            hideError('email');
+            return true;
+        }
+
+        function validatePassword() {
+            const password = passwordInput.value;
+            const hasLetter = /[a-zA-Z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            const isLongEnough = password.length >= 8;
+
+            let strength = 0;
+            if (hasLetter) strength++;
+            if (hasNumber) strength++;
+            if (hasSpecialChar) strength++;
+            if (isLongEnough) strength++;
+
+            const strengthColors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500'];
+            const strengthTexts = ['Weak', 'Fair', 'Good', 'Strong'];
+
+            passwordStrength.className = `h-2 rounded-full transition-all duration-300 ${strengthColors[strength - 1]}`;
+            passwordStrength.style.width = `${strength * 25}%`;
+            passwordStrengthText.textContent = strengthTexts[strength - 1];
+
+            if (!isLongEnough || !hasLetter || !hasSpecialChar) {
+                showError('password', 'Password must be at least 8 characters long, contain 1 letter and 1 special character');
+                return false;
+            }
+            hideError('password');
+            return true;
+        }
+
+        function validateRepeatPassword() {
+            const password = passwordInput.value;
+            const repeatPassword = repeatPasswordInput.value;
+            if (password !== repeatPassword) {
+                showError('repeat-password', 'Passwords do not match');
+                return false;
+            }
+            hideError('repeat-password');
+            return true;
+        }
+
+        usernameInput.addEventListener('input', validateUsername);
+        emailInput.addEventListener('input', validateEmail);
+        passwordInput.addEventListener('input', validatePassword);
+        repeatPasswordInput.addEventListener('input', validateRepeatPassword);
+
+        // Show password strength indicator on focus
+        passwordInput.addEventListener('focus', () => {
+            passwordStrengthContainer.classList.remove('hidden');
+        });
+
+        // Hide password strength indicator on blur
+        passwordInput.addEventListener('blur', () => {
+            passwordStrengthContainer.classList.add('hidden');
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll("#register-form input");
+
+        inputs.forEach((input, index) => {
+            input.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault(); // Prevent form submission
+                    
+                    const nextInput = inputs[index + 1]; // Get the next input field
+                    if (nextInput) {
+                        nextInput.focus(); // Move focus to the next field
+                    }
+                }
+            });
+        });
+    });
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const isUsernameValid = validateUsername();
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+            const isRepeatPasswordValid = validateRepeatPassword();
+
+            if (isUsernameValid && isEmailValid && isPasswordValid && isRepeatPasswordValid) {
+                form.submit();  // Submit if all validations pass
+            }
+        });
+
+    </script>
+</body>
+</html>
+
+<!-- <html>
+<head>
+    <title>SmallTalk - Register</title>
+
+</head>
+<body>
+   <form id="register-form" action="{% url 'register' %}" method="POST" class="space-y-4">
+        {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+   </form>
+</body>
+</html> -->

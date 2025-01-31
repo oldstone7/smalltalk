@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ChatApp</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" rel="stylesheet" type="text/css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="menu">
+            <div class="togglemenu">
+                <button type="button" class="btn toggler"><span class="mdi mdi-menu mdi-24px"></span></button>
+                <form id="search-form">
+                    <input id="search" type="text" placeholder="Search contacts">
+                    <span id="magnify" class="mdi mdi-magnify"></span>
+                </form>
+            </div> 
+            <div class="contact-list">
+                <ul style="padding-left: 0%;">
+                    {% for user in users %}
+                        <li class="contacts">
+                            <a class="normal_link" href="{% url 'chat' user.id %}">
+                                <img class="contact-img" src="{% static 'css/images/man.jpg' %}">
+                                <div class="contact-info">           
+                                    {{ user.username }}
+                                    {% if user.last_message %}
+                                        <div id="last-message-{{ user.id }}">
+                                            {{ user.last_message }}
+                                        </div>
+                                    {% else %}
+                                        <div id="last-message-{{ user.id }}">
+                                            No messages yet
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="last-seen">
+                                        {{ user.last_message_timestamp|date:"M j" }}
+                                </div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                    <li>Files and media sharing and group chat features are implemented soon, and this app's UI and look is going to get upgraded. Thank you 👍 by Oldstone7</li>
+                </ul>
+            </div>
+        </div>
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <script>
+        const userId = "{{ user.id }}";
+        const chatSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/chat/' + userId + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const otherUserId = data.sender_id == userId ? data.receiver_id : data.sender_id;
+
+            const lastMessageElement = document.getElementById(`last-message-${otherUserId}`);
+            const contactElement = document.querySelector(`.contacts a[href$="${otherUserId}/"]`);
+            const lastSeenElement = contactElement.querySelector('.last-seen');
+
+            if (lastMessageElement) {
+                lastMessageElement.textContent = data.message;
+            }
+            if (lastSeenElement) {
+                lastSeenElement.textContent = data.timestamp;
+            }
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+    </script>
+</body>
+</html>
