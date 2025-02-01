@@ -1,5 +1,6 @@
 
 .env
+chat/__pycache__
 
 ChatApp/__pycache__
 
