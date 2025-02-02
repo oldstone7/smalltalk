@@ -22,6 +22,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 import os
 from dotenv import load_dotenv
+# Add these at the top of your settings.py
+
+from urllib.parse import urlparse
 
 load_dotenv()  # Load .env variables
 
@@ -97,9 +100,21 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-import dj_database_url
+
+
+
+
+
 DATABASES = {
-    "default": dj_database_url.config(default=os.getenv("DATABASE_URL"))
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("NAME"),
+        'USER': os.getenv("USER"),
+        'PASSWORD': os.getenv("PASSWORD"),
+        'HOST': os.getenv("HOST"),
+        'PORT': os.getenv("PORT"),
+        
+    }
 }
 
 
