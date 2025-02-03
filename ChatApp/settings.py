@@ -113,6 +113,9 @@ DATABASES = {
         'PASSWORD': os.getenv("PASSWORD"),
         'HOST': os.getenv("HOST"),
         'PORT': os.getenv("PORT"),
+        'OPTIONS': {
+            'sslmode': 'require',  # NeonDB requires SSL mode
+        },
         
     }
 }
