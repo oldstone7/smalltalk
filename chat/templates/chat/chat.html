@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<div class="chat-container">
+<div class="chat-container" >
     <div class="chat-header">
         <div class="chat-user-info">
             <h4>{{ other_user.username }}</h4>
@@ -12,7 +12,7 @@
             <span class="mdi mdi-dots-vertical mdi-24px"></span>
         </div>
     </div>
-    <div id="chat-box" class="chat-box">
+    <div id="chat-box" class="chat-box" >
         {% for message in messages %}
         <div class="chat-message {% if message.sender == user %}sent{% else %}received{% endif %}">
             <div class="message-content">{{ message.content }}
