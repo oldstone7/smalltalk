@@ -102,18 +102,17 @@ CHANNEL_LAYERS = {
 
 
 
-
+url = urlparse(os.getenv("DATABASE_URL"))
 
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("NAME"),
-        'USER': os.getenv("USER"),
-        'PASSWORD': os.getenv("PASSWORD"),
-        'HOST': os.getenv("HOST"),
-        'PORT': os.getenv("PORT"),
-        
+        'NAME': url.path[1:],  # Database name
+        'USER': url.username,  # Database username
+        'PASSWORD': url.password,  # Database password
+        'HOST': url.hostname,  # Database server
+        'PORT': url.port,  # Database port
     }
 }
 
