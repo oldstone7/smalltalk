@@ -38,7 +38,7 @@
     const userId = "{{ user.id }}";
     const otherUserId = "{{ other_user.id }}";
     const chatSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat/' + otherUserId + '/'
+        'wss://' + window.location.host + '/wss/chat/' + otherUserId + '/'
     );
 
     chatSocket.onopen = function(e) {

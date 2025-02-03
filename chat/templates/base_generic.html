@@ -23,7 +23,7 @@
                     {% for user in users %}
                         <li class="contacts">
                             <a class="normal_link" href="{% url 'chat' user.id %}">
-                                <img class="contact-img" src="{% static 'css/images/man.jpg' %}">
+                                <img class="contact-img" src="{% static 'images/man.jpg' %}">
                                 <div class="contact-info">           
                                     {{ user.username }}
                                     {% if user.last_message %}
@@ -55,7 +55,7 @@
     <script>
         const userId = "{{ user.id }}";
         const chatSocket = new WebSocket(
-            'ws://' + window.location.host + '/ws/chat/' + userId + '/'
+            'wss://' + window.location.host + '/wss/chat/' + userId + '/'
         );
 
         chatSocket.onmessage = function(e) {
