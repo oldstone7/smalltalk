@@ -32,8 +32,10 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://smalltalk-production.up.railway.app',
+]
 
-CSRF_ALLOW_ORIGIN = ["*"]
 
 # Application definition
 
