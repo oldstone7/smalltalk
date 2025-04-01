@@ -30,11 +30,10 @@ load_dotenv()  # Load .env variables
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
-# ALLOWED_HOSTS = [*os.getenv("ALLOWED_HOSTS", "").split(",")]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")  # Split by comma
 
-# CSRF_TRUSTED_ORIGINS = [
-#     'https://smalltalk-production.up.railway.app',
-# ]
+CSRF_TRUSTED_ORIGINS = ["https://smalltalk-r2j9.onrender.com"]
+
 
 
 # Application definition
