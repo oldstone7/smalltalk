@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-import os
+import os , dj_database_url
 from dotenv import load_dotenv
 # Add these at the top of your settings.py
 
@@ -30,11 +30,11 @@ load_dotenv()  # Load .env variables
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = [*os.getenv("ALLOWED_HOSTS", "").split(",")]
+# ALLOWED_HOSTS = [*os.getenv("ALLOWED_HOSTS", "").split(",")]
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://smalltalk-production.up.railway.app',
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://smalltalk-production.up.railway.app',
+# ]
 
 
 # Application definition
@@ -104,21 +104,9 @@ CHANNEL_LAYERS = {
 
 
 
-url = urlparse(os.getenv("DATABASE_URL"))
-
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': url.path[1:],  # Database name
-        'USER': url.username,  # Database username
-        'PASSWORD': url.password,  # Database password
-        'HOST': url.hostname,  # Database server
-        'PORT': url.port,  # Database port
-    }
+    'default': dj_database_url.config(default=os.getenv("DATABASE_URL"))
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
