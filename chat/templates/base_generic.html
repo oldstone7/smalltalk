@@ -9,7 +9,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <!-- <div class="container-fluid">
+    <div class="container-fluid">
         <div class="menu">
             <div class="togglemenu">
                 <button type="button" class="btn toggler"><span class="mdi mdi-menu mdi-24px"></span></button>
@@ -50,13 +50,13 @@
             {% block content %}
             {% endblock %}
         </div>
-    </div> -->
-<div>
+    </div>
+<!-- <div>
     <h2>Something went wrong</h2>
     <h4>
     Sorry for the inconvenience, but the chat app ran into some database issues. I am working on it and will fix it soon.If you wish to try this chat application I have integrated this same app in my 
-    <a href="https://ceodb-production.up.railway.app/">CEO Dashboard application.</a>Make usre to check out that. By oldstone7 👍</h4>
-</div>
+    <a href="https://ceodb-production.up.railway.app/">CEO Dashboard application.</a>Make sure to check that out. By oldstone7 👍</h4>
+</div> -->
     <script>
         const userId = "{{ user.id }}";
         const chatSocket = new WebSocket(
